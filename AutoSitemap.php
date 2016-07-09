@@ -50,7 +50,7 @@ $wgExtensionCredits['AutoSitemap'][] = array (
 	'path'=>__FILE__,
 	'name' => 'AutoSitemap',
 	'description' => 'Creates a XML Sitemap file automatically.',
-	'url' => 'https://www.mediawiki.org/wiki/Extension:AutoSitemap',
+	'url' => 'https://github.com/dolfinus/AutoSitemap',
 	'author' => 'Dolfinus',
 	'descriptionmsg' => 'ausmp-desc',
 	'version' => '1.0',
@@ -152,10 +152,9 @@ $wgHooks['PageContentSaveComplete'][] = 'writeSitemap';
         }
 
         function formatResult($result ) {
-                global $wgLang, $wgContLang, $wgServer, $wgAutoSitemap_ServerBase,$wgUser;
+                global $wgLang, $wgContLang, $wgServer, $wgAutoSitemap_ServerBase;
 		global $file_name,$DEFAULT_SITEMAP_HEADER,$DEFAULT_PRIORITY,$DEFAULT_CHANGE_FREQ,$file_handle,$file_exists,$count,$cursor_pos,$form_action,$article_priorities,$estimate_change_freq,$sorting_criterion;
 
-        	$skin = $wgUser->getSkin();
 
 		$serverBase = $wgServer;
 		if ( strlen($wgAutoSitemap_ServerBase) > 0 ) {
@@ -163,7 +162,7 @@ $wgHooks['PageContentSaveComplete'][] = 'writeSitemap';
 		}
 
                 $title = Title::makeTitle( $result->namespace, $result->title );
-                $link = $skin->makeKnownLinkObj( $title, htmlspecialchars( $wgContLang->convert( $title->getPrefixedText() ) ) );
+                $link = Linker::linkKnown( $title, htmlspecialchars( $wgContLang->convert( $title->getPrefixedText() ) ) );
 
                 $url = $title->getLocalURL();
                 $form_action=$title->getLocalURL( 'action=submit' );
