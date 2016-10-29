@@ -71,7 +71,7 @@ $wgHooks['ArticleRevisionUndeleted'][] = 'writeSitemap';
 $wgHooks['RevisionInsertComplete'][] = 'writeSitemap';
 $wgHooks['PageContentSaveComplete'][] = 'writeSitemap';
 
-        $file_name = $GLOBALS['wgAutoSitemap_Sitemap'] ? $GLOBALS['wgAutoSitemap_Sitemap'] : 'sitemap.xml'; // relative to $wgSitename (must be writable)
+        $file_name = isset($GLOBALS['wgAutoSitemap_Sitemap']) ? $GLOBALS['wgAutoSitemap_Sitemap'] : 'sitemap.xml'; // relative to $wgSitename (must be writable)
         /*
          * see http://www.manual.com/schemas/sitemap/0.84/sitemap.xsd for more details
          */
