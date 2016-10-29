@@ -128,7 +128,7 @@ $wgHooks['PageContentSaveComplete'][] = 'writeSitemap';
 	}
 
 	function getSQL() {
-		global $wgwgAutoSitemap_ExcludeSites,$wgAutoSitemap_Exclude;
+		global $wgAutoSitemap_ExcludeSites,$wgAutoSitemap_Exclude;
 		global $file_name,$DEFAULT_SITEMAP_HEADER,$DEFAULT_PRIORITY,$DEFAULT_CHANGE_FREQ,$file_handle,$file_exists,$count,$cursor_pos,$form_action,$article_priorities,$estimate_change_freq,$sorting_criterion;
 		$dbr =& wfGetDB( DB_SLAVE );
 		$page = $dbr->tableName( 'page' );
@@ -143,8 +143,8 @@ $wgHooks['PageContentSaveComplete'][] = 'writeSitemap';
             				$sql.=' AND page_namespace <>"'.$key.'"';
 
 			// Exclude some pages by their title.
-		if (sizeof($wgwgAutoSitemap_ExcludeSites)) {
-			$sql.=" AND page_title NOT IN ('" .implode("','", $wgwgAutoSitemap_ExcludeSites). "')";
+		if (sizeof($wgAutoSitemap_ExcludeSites)) {
+			$sql.=" AND page_title NOT IN ('" .implode("','", $wgAutoSitemap_ExcludeSites). "')";
 		}
 
 		$sql.=') AND page_is_redirect = 0 AND rev_page = page_id GROUP BY page_id';
