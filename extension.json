@@ -1,0 +1,51 @@
+{
+  "name": "AutoSitemap",
+  "author": "Dolfinus",
+  "url": "https://www.mediawiki.org/wiki/Extension:AutoSitemap",
+  "description": "Creates a XML Sitemap file automatically.",
+  "version": "1.1",
+  "license-name": "GPL-3.0+",
+  "type": "other",
+  "ExtensionMessagesFiles": {
+    "AutoSitemap": "AutoSitemap.i18n.php"
+  },
+  "AutoloadClasses": {
+    "AutoSitemap": "AutoSitemap_body.php"
+  },
+  "Hooks": {
+    "PageContentInsertComplete" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "AfterImportPage" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "ArticleDeleteComplete" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "ArticleUndelete" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "TitleMoveComplete" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "ArticleMergeComplete" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "ArticleRollbackComplete" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "UploadComplete" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "ArticleRevisionUndeleted" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "RevisionInsertComplete" : [
+	    "AutoSitemap::writeSitemap"
+    ],
+    "PageContentSaveComplete" : [
+	    "AutoSitemap::writeSitemap"
+    ]
+  },
+  "manifest_version": 1
+}
