@@ -50,8 +50,8 @@ global $wgAutoSitemap, $wgServer, $wgServer, $wgCanonicalServer, $wgScriptPath;
 if (!isset($wgAutoSitemap["filename"]          )) $wgAutoSitemap["filename"]           = "sitemap.xml";
 if (!isset($wgAutoSitemap["server"]            )) $wgAutoSitemap["server"]             = isset($wgCanonicalServer) ? $wgCanonicalServer : $wgServer;
 if (!isset($wgAutoSitemap["notify"]            )) $wgAutoSitemap["notify"]             = [
-                                                                                            'https://www.google.com/webmasters/sitemaps/ping?sitemap='.$wgScriptPath."/".$wgAutoSitemap["filename"],
-                                                                                            'https://www.bing.com/webmaster/ping.aspx?sitemap='.$wgScriptPath."/".$wgAutoSitemap["filename"],
+                                                                                            'https://www.google.com/webmasters/sitemaps/ping?sitemap='.$wgAutoSitemap["server"]."/".$wgAutoSitemap["filename"],
+                                                                                            'https://www.bing.com/webmaster/ping.aspx?sitemap='.$wgAutoSitemap["server"]."/".$wgAutoSitemap["filename"],
                                                                                          ];
 
 if (!isset($wgAutoSitemap["exclude_namespaces"])) $wgAutoSitemap["exclude_namespaces"] = [
