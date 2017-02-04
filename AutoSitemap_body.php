@@ -50,31 +50,32 @@ global $wgAutoSitemap, $wgServer, $wgServer, $wgCanonicalServer, $wgScriptPath;
 if (!isset($wgAutoSitemap["filename"]          )) $wgAutoSitemap["filename"]           = "sitemap.xml";
 if (!isset($wgAutoSitemap["server"]            )) $wgAutoSitemap["server"]             = isset($wgCanonicalServer) ? $wgCanonicalServer : $wgServer;
 if (!isset($wgAutoSitemap["notify"]            )) $wgAutoSitemap["notify"]             = [
-                                                                                            'https://www.google.com/webmasters/sitemaps/ping?sitemap='.$wgScriptPath."/".$wgAutoSitemap["filename"],
-                                                                                            'https://www.bing.com/webmaster/ping.aspx?sitemap='.$wgScriptPath."/".$wgAutoSitemap["filename"],
+                                                                                            'https://www.google.com/webmasters/sitemaps/ping?sitemap='.$wgAutoSitemap["server"].$wgScriptPath.'/'.$wgAutoSitemap["filename"],
+                                                                                            'https://www.bing.com/webmaster/ping.aspx?sitemap='.$wgAutoSitemap["server"].$wgScriptPath.'/'.$wgAutoSitemap["filename"],
+                                                                                            'https://blogs.yandex.ru/pings/?status=success&url='.$wgAutoSitemap["server"].$wgScriptPath.'/'.$wgAutoSitemap["filename"],
                                                                                          ];
 
 if (!isset($wgAutoSitemap["exclude_namespaces"])) $wgAutoSitemap["exclude_namespaces"] = [
                                                                                             NS_TALK,
-                                                                                            NS_USER,   
+                                                                                            NS_USER,
                                                                                             NS_USER_TALK,
                                                                                             NS_PROJECT_TALK,
                                                                                             NS_IMAGE_TALK,
-                                                                                            NS_MEDIAWIKI,   
+                                                                                            NS_MEDIAWIKI,
                                                                                             NS_MEDIAWIKI_TALK,
                                                                                             NS_TEMPLATE,
                                                                                             NS_TEMPLATE_TALK,
-                                                                                            NS_HELP,   
+                                                                                            NS_HELP,
                                                                                             NS_HELP_TALK,
                                                                                             NS_CATEGORY_TALK
-                                                                                         ];      
+                                                                                         ];
 
 if (!isset($wgAutoSitemap["exclude_pages"]    )) $wgAutoSitemap["exclude_pages"]       = [];
 if (!isset($wgAutoSitemap["freq"]             )) $wgAutoSitemap["freq"]                = "daily";
 
-if (!isset($wgAutoSitemap["header"]           )) $wgAutoSitemap["header"]              = 
+if (!isset($wgAutoSitemap["header"]           )) $wgAutoSitemap["header"]              =
 '<?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="extensions/AutoSitemap/sitemap.xsl"?>
+<?xml-stylesheet type="text/xsl" href="'.$wgAutoSitemap["server"].$wgScriptPath.'/'.'extensions/AutoSitemap/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
 
@@ -86,7 +87,7 @@ $wgAutoSitemap["file_exists"]='';
 
 $wgAutoSitemap["count"]=0;
 $wgAutoSitemap["cursor_pos"]=0;
-    
+
 class AutoSitemap {
 
     static public function writeSitemap() {
@@ -107,7 +108,7 @@ class AutoSitemap {
         while($row = $dbr->fetchObject( $res )) {
             self::formatResult($row );
         }
-        
+
         self::utf8_write( $wgAutoSitemap["file_handle"] , $wgAutoSitemap["footer"] ) ;
 
         fclose( $wgAutoSitemap["file_handle"] );
@@ -134,13 +135,13 @@ class AutoSitemap {
                      page_is_redirect = 0
               AND    rev_page = page_id
               ';
-        
+
         if(is_array($wgAutoSitemap["exclude_namespaces"])) {
             if (count($wgAutoSitemap["exclude_namespaces"]) > 0 ) {
                 $sql.='AND page_namespace NOT IN ('.implode(",", $wgAutoSitemap["exclude_namespaces"]). ")\n";
             }
         }
-        
+
         if (is_array($wgAutoSitemap["exclude_pages"]) ) {
             if (count($wgAutoSitemap["exclude_pages"]) > 0 ) {
                 $sql.="AND page_title NOT IN ('" .implode("','", $wgAutoSitemap["exclude_pages"]). "')\n";
@@ -148,17 +149,17 @@ class AutoSitemap {
         }
 
         $sql.='GROUP BY page_id';
-        
+
         return $sql;
     }
 
 
-    static public function getPriority() { 
+    static public function getPriority() {
         global $wgAutoSitemap;
         return ($wgAutoSitemap["cursor_pos"] / $wgAutoSitemap["count"]);
     }
 
-    static public function getChangeFreq( $page_id ) { 
+    static public function getChangeFreq( $page_id ) {
         global $wgAutoSitemap;
 
         if ($wgAutoSitemap["freq"] !== "adjust" ) return $wgAutoSitemap["freq"];
@@ -194,7 +195,7 @@ class AutoSitemap {
             }
         }
     }
-        
+
     static public function formatResult($result ) {
         global $wgAutoSitemap, $wgLang, $wgContLang, $wgServer;
 
@@ -211,14 +212,14 @@ class AutoSitemap {
 
         return;
     }
-        
+
     static public function addURL( $base, $url, $last_modification, $page_id ) {
         global $wgAutoSitemap;
 
         $result="  <url>\n    <loc>$base$url</loc>\n    <priority>".round(self::getPriority(),1)."</priority>\n    <lastmod>$last_modification</lastmod>\n    <changefreq>".(self::getChangeFreq($page_id))."</changefreq>\n  </url>\n";
         self::utf8_write( $wgAutoSitemap["file_handle"], $result );
     }
-    
+
     static public function utf8_write( $handle, $data ) {
         fwrite( $handle, utf8_encode( $data ) ) ;
     }

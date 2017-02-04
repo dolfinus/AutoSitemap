@@ -1,6 +1,6 @@
 # [AutoSitemap](https://www.mediawiki.org/wiki/Extension:AutoSitemap)
 ## Description
-MediaWiki extension that automatically build sitemap.xml file at every page create/edit/delete event. Sitemap file helps search engines to observe your site's pages.
+MediaWiki extension that automatically build sitemap.xml file every time a page is created, edited or deleted. A sitemap file helps search engines to observe and focus on a web sites page content.
 
 ## Intall
 Download the latest snapshot and extract it to your extensions directory. Then include it in your [LocalSettings.php](https://www.mediawiki.org/wiki/Manual:LocalSettings.php) file as in the following example:
@@ -9,26 +9,29 @@ wfLoadExtension( 'AutoSitemap' );
 ```
 
 ## Configure
+There are some optional parameters that changes the sitemap generation. You can set them in your LocalSettings.php.
+
 ### Filename
 You can set filename of sitemap by setting:
 ```php
-$wgAutoSitemap["filename"] = "sitemap.xml";
+$wgAutoSitemap["filename"] = "sitemap.xml"; //default value
 ```
 ### Setting base url
-By default all urls in sitemap use $wgCanonicalServer (or $wgServer, if it doesn't set) as domain prefix. If you want to set it to another one or simple doesn't want to set $wgCanonicalServer, you can change it manually by setting:
+By default all urls in sitemap use $wgCanonicalServer (or $wgServer, if it doesn't set) as domain prefix. If you want to set it to another one, you can change it manually by setting:
 ```php
-$wgAutoSitemap["server"] = "https://your-base-url.com";
+$wgAutoSitemap["server"] = "https://your-site.com";
 ```
 
 ### Search engines notification
 You can notify web sites you want about the update of sitemap. Just write all notify urls as array:
 ```php
 $wgAutoSitemap["notify"] = [
-    'https://www.google.com/webmasters/sitemaps/ping?sitemap=/sitemap.xml',
-    'https://www.bing.com/webmaster/ping.aspx?sitemap=/sitemap.xml',
+    'https://www.google.com/webmasters/sitemaps/ping?sitemap=https://your-site.com/sitemap.xml',
+    'https://www.bing.com/webmaster/ping.aspx?sitemap=https://your-site.com/sitemap.xml',
+    'https://blogs.yandex.ru/pings/?status=success&url=https://your-site.com/sitemap.xml',
 ];
 ```
-Sometimes web hoster does not allow the fopen command to call urls (allow_url_fopen=false). If you can't or doesn't want to use notification, set this setting to empty array.
+Sometimes web hoster does not allow the fopen command to call urls (allow_url_fopen=false). If you can't or doesn't want to use notification, set this to empty array by deleting all lines between brackets (`= [];`).
 
 ### Exclude types of pages from sitemap
 You can exclude namespaces or exact pages from including them to sitemap:
@@ -51,7 +54,7 @@ $wgAutoSitemap["exclude_namespaces"] = [
 $wgAutoSitemap["exclude_pages"] = ['page title to exclude', 'other one'];
 ```
 ### Set page update frequency
-You can manually specify the frequency with which all addresses will be checked by search engine:
+You can manually specify the recommended frequency with which all addresses will be checked by search engine:
 ```php
 $wgAutoSitemap["freq"] = "daily"; //default
 ```
@@ -67,10 +70,10 @@ adjust - for automatic determination of frequency based on page edits count
 
 ## Use
 ### Permissions
-Your MediaWiki folder should be permitted for write operations (chmod +w).
+Your MediaWiki folder should be permitted for write operations (`chmod +w` with `chown apache` or `chown nginx`).
 
 ### Htaccess, Nginx
-If you want to see a human-readable sitemap, allow read access for sitemap.xsl file in your site config.
+If you want to see a human-readable sitemap, allow read access for sitemap.xsl file in your site config (`.htacces` file or other).
 
 # See also
 * [Very old original extension](https://www.mediawiki.org/wiki/Extension:ManualSitemap)
