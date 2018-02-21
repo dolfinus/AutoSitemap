@@ -216,7 +216,7 @@ class AutoSitemap {
     static public function addURL( $base, $url, $last_modification, $page_id ) {
         global $wgAutoSitemap;
 
-        $result="  <url>\n    <loc>$base$url</loc>\n    <priority>".round(self::getPriority(),1)."</priority>\n    <lastmod>$last_modification</lastmod>\n    <changefreq>".(self::getChangeFreq($page_id))."</changefreq>\n  </url>\n";
+        $result="  <url>\n    <loc>".str_replace(array('(',')'),array('%28','%29'),$base.$url)."</loc>\n    <priority>".round(self::getPriority(),1)."</priority>\n    <lastmod>$last_modification</lastmod>\n    <changefreq>".(self::getChangeFreq($page_id))."</changefreq>\n  </url>\n";
         self::utf8_write( $wgAutoSitemap["file_handle"], $result );
     }
 
