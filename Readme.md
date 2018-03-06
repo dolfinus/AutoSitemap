@@ -73,7 +73,7 @@ adjust - for automatic determination of frequency based on page edits count
 Your MediaWiki folder should be permitted for write operations (`chmod +w` with `chown apache` or `chown nginx`).
 
 ### Htaccess, Nginx
-If you want to see a human-readable sitemap, allow read access for sitemap.xsl file in your site config (`.htacces` file or other).
+If you want to see a human-readable sitemap, allow read access for sitemap.xsl file in your site config (`.htaccess` file or other).
 
 # See also
 * [Very old original extension](https://www.mediawiki.org/wiki/Extension:ManualSitemap)
