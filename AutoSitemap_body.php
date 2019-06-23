@@ -53,7 +53,6 @@ if (!isset($wgAutoSitemap["server"]            )) $wgAutoSitemap["server"]      
 if (!isset($wgAutoSitemap["notify"]            )) $wgAutoSitemap["notify"]             = [
                                                                                             'https://www.google.com/webmasters/sitemaps/ping?sitemap='.$wgAutoSitemap["server"].$wgScriptPath.'/'.$wgAutoSitemap["filename"],
                                                                                             'https://www.bing.com/webmaster/ping.aspx?sitemap='.$wgAutoSitemap["server"].$wgScriptPath.'/'.$wgAutoSitemap["filename"],
-                                                                                            'https://blogs.yandex.ru/pings/?status=success&url='.$wgAutoSitemap["server"].$wgScriptPath.'/'.$wgAutoSitemap["filename"],
                                                                                          ];
 
 if (!isset($wgAutoSitemap["exclude_namespaces"])) $wgAutoSitemap["exclude_namespaces"] = [
