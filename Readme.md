@@ -28,7 +28,6 @@ You can notify web sites you want about the update of sitemap. Just write all no
 $wgAutoSitemap["notify"] = [
     'https://www.google.com/webmasters/sitemaps/ping?sitemap=https://your-site.com/sitemap.xml',
     'https://www.bing.com/webmaster/ping.aspx?sitemap=https://your-site.com/sitemap.xml',
-    'https://blogs.yandex.ru/pings/?status=success&url=https://your-site.com/sitemap.xml',
 ];
 ```
 Sometimes web hoster does not allow the fopen command to call urls (allow_url_fopen=false). If you can't or doesn't want to use notification, set this to empty array by deleting all lines between brackets (`= [];`).
@@ -38,15 +37,15 @@ You can exclude namespaces or exact pages from including them to sitemap:
 ```php
 $wgAutoSitemap["exclude_namespaces"] = [
     NS_TALK,
-    NS_USER,   
+    NS_USER,
     NS_USER_TALK,
     NS_PROJECT_TALK,
     NS_IMAGE_TALK,
-    NS_MEDIAWIKI,   
+    NS_MEDIAWIKI,
     NS_MEDIAWIKI_TALK,
     NS_TEMPLATE,
     NS_TEMPLATE_TALK,
-    NS_HELP,   
+    NS_HELP,
     NS_HELP_TALK,
     NS_CATEGORY_TALK
 ]; //default values
