@@ -88,7 +88,8 @@ class AutoSitemap {
 
         $server       = $wgAutoSitemap["server"];
         $filename     = $wgAutoSitemap["filename"];
-        $tmp_filename = $filename.'.tmp';
+        $random_suffix = '.'.bin2hex(random_bytes(16));
+        $tmp_filename = $filename.$random_suffix;
 
         $file_handle = fopen($tmp_filename, 'w') or die('Cannot write to '.$tmp_filename.'.');
 
