@@ -40,13 +40,14 @@
 #AutoSitemap
 #1.0: Rewrited extension for automatic sitemap generation
 #1.1: Upgrade to MediaWiki 1.25, code review
+#1.2: Search engines notifications improvements & fixes
+#1.2.1: Write sitemap to tempfile and then rename it
 
-if ( !defined( 'MEDIAWIKI' ) ) {
-    die( 'This file is a MediaWiki extension, it is not a valid entry point' );
+if (!defined('MEDIAWIKI')) {
+    die('This file is a MediaWiki extension, it is not a valid entry point');
 }
 
-
-global $wgAutoSitemap, $wgServer, $wgServer, $wgCanonicalServer, $wgScriptPath;
+global $wgAutoSitemap, $wgServer, $wgCanonicalServer, $wgScriptPath;
 if (!isset($wgAutoSitemap["filename"]          )) $wgAutoSitemap["filename"]           = "sitemap.xml";
 if (!isset($wgAutoSitemap["server"]            )) $wgAutoSitemap["server"]             = isset($wgCanonicalServer) ? $wgCanonicalServer : $wgServer;
 if (!isset($wgAutoSitemap["notify"]            )) $wgAutoSitemap["notify"]             = [
@@ -76,57 +77,54 @@ if (!isset($wgAutoSitemap["freq"]             )) $wgAutoSitemap["freq"]         
 if (!isset($wgAutoSitemap["header"]           )) $wgAutoSitemap["header"]              =
 '<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="'.$wgAutoSitemap["server"].$wgScriptPath.'/'.'extensions/AutoSitemap/sitemap.xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+';
 
-
-if (!isset($wgAutoSitemap["footer"]           )) $wgAutoSitemap["footer"]              =
-"\n</urlset>";
-
-$wgAutoSitemap["file_handle"]='';
-$wgAutoSitemap["file_exists"]='';
-
-$wgAutoSitemap["count"]=0;
-$wgAutoSitemap["cursor_pos"]=0;
+if (!isset($wgAutoSitemap["footer"]           )) $wgAutoSitemap["footer"]              = "\n</urlset>";
 
 class AutoSitemap {
 
     static public function writeSitemap() {
         global $wgAutoSitemap;
 
-        $wgAutoSitemap["count"]       = 0;
-        $wgAutoSitemap["cursor_pos"]  = 0;
-        $wgAutoSitemap["file_exists"] = file_exists ( $wgAutoSitemap["filename"] ) ;
-        $wgAutoSitemap["file_handle"] = fopen( $wgAutoSitemap["filename"], 'w' ) or die( 'Cannot write to '.$wgAutoSitemap["filename"].'.' );
+        $server       = $wgAutoSitemap["server"];
+        $filename     = $wgAutoSitemap["filename"];
+        $tmp_filename = $filename.'.tmp';
 
-        self::utf8_write( $wgAutoSitemap["file_handle"] ,$wgAutoSitemap["header"]);
+        $file_handle = fopen($tmp_filename, 'w') or die('Cannot write to '.$tmp_filename.'.');
 
-        $dbr = wfGetDB( DB_SLAVE );
+        $dbr = wfGetDB(DB_SLAVE);
         $res = $dbr->query(self::getSQL());
 
-        $wgAutoSitemap["count"] = $dbr->numRows($res);
+        $count = $dbr->numRows($res);
+        $pos   = 0;
 
-        while($row = $dbr->fetchObject( $res )) {
-            self::formatResult($row );
+        $data = $wgAutoSitemap["header"];
+        while($row = $dbr->fetchObject($res)) {
+            $data .= self::formatResult($server, $row, $pos, $count);
+            ++$pos;
         }
+        $data .= $wgAutoSitemap["footer"];
 
-        self::utf8_write( $wgAutoSitemap["file_handle"] , $wgAutoSitemap["footer"] ) ;
+        fwrite($file_handle, utf8_encode($data));
+        fclose($file_handle);
+        rename($tmp_filename, $filename);
 
-        fclose( $wgAutoSitemap["file_handle"] );
         self::notifySitemap();
     }
 
-    static public function getSQL() {
+    static function getSQL() {
         global $wgAutoSitemap;
 
-        $dbr = wfGetDB( DB_SLAVE );
-        $page = $dbr->tableName( 'page' );
-        $revision = $dbr->tableName( 'revision' );
+        $dbr =& wfGetDB(DB_SLAVE);
+        $page = $dbr->tableName('page');
+        $revision = $dbr->tableName('revision');
 
         $sql='SELECT "Popularpages" AS type,
                      page_id AS id,
                      page_namespace AS namespace,
                      page_title AS title,
-                     ( MAX( rev_timestamp ) ) AS last_modification,
+                     (MAX(rev_timestamp)) AS last_modification,
                      rev_timestamp AS value
               FROM
                      '.$page.',
@@ -137,91 +135,91 @@ class AutoSitemap {
               ';
 
         if(is_array($wgAutoSitemap["exclude_namespaces"])) {
-            if (count($wgAutoSitemap["exclude_namespaces"]) > 0 ) {
+            if (count($wgAutoSitemap["exclude_namespaces"]) > 0) {
                 $sql.='AND page_namespace NOT IN ('.implode(",", $wgAutoSitemap["exclude_namespaces"]). ")\n";
             }
         }
 
-        if (is_array($wgAutoSitemap["exclude_pages"]) ) {
-            if (count($wgAutoSitemap["exclude_pages"]) > 0 ) {
-                $sql.="AND page_title NOT IN ('" .implode("','", $wgAutoSitemap["exclude_pages"]). "')\n";
+        if (is_array($wgAutoSitemap["exclude_pages"])) {
+            if (count($wgAutoSitemap["exclude_pages"]) > 0) {
+                $sql.='AND page_title NOT IN (\'' .implode("','", $wgAutoSitemap["exclude_pages"]). "')\n";
             }
         }
 
-        $sql.='GROUP BY page_id';
+        $sql .= 'GROUP BY page_id';
 
         return $sql;
     }
 
 
-    static public function getPriority() {
-        global $wgAutoSitemap;
-        return ($wgAutoSitemap["cursor_pos"] / $wgAutoSitemap["count"]);
+    static function getPriority($pos, $count) {
+        return $pos/$count;
     }
 
-    static public function getChangeFreq( $page_id ) {
+    static function getChangeFreq($page_id) {
         global $wgAutoSitemap;
 
-        if ($wgAutoSitemap["freq"] !== "adjust" ) return $wgAutoSitemap["freq"];
+        if ($wgAutoSitemap["freq"] !== "adjust") {
+            return $wgAutoSitemap["freq"];
+        }
 
 
-        $dbr =& wfGetDB( DB_SLAVE );
-
-        $revision = $dbr->tableName( 'revision' );
+        $dbr =& wfGetDB(DB_SLAVE);
+        $revision = $dbr->tableName('revision');
 
         $sql = "SELECT
         MIN(rev_timestamp) AS creation_timestamp,
         COUNT(rev_timestamp) AS revision_count
         FROM $revision WHERE rev_page = $page_id";
 
-        $res = $dbr->query( $sql );
-        $count = $dbr->numRows( $res );
+        $res   = $dbr->query($sql);
+        $count = $dbr->numRows($res);
 
-        if( $count < 1 ) {
+        if($count < 1) {
             return "daily";
         } else {
-            $item1 =( $dbr->fetchObject( $res ) );
+            $item1 = $dbr->fetchObject($res);
             $cur = time() ;
-            $first = wfTimestamp( TS_UNIX, $item1->creation_timestamp );
+            $first = wfTimestamp(TS_UNIX, $item1->creation_timestamp);
 
-            $diff = ($cur - $first) / $item1->revision_count ;
-            switch( true ) {
-                case $diff < 3600: return "hourly";
-                case $diff < 24*3600: return "daily";
-                case $diff < 7*24*3600: return "weekly";
-                case $diff < 30.33*24*3600: return "monthly";
+            $diff = ($cur - $first) / $item1->revision_count;
+            switch(true) {
+                case $diff < 3600:           return "hourly";
+                case $diff < 24*3600:        return "daily";
+                case $diff < 7*24*3600:      return "weekly";
+                case $diff < 30.33*24*3600:  return "monthly";
                 case $diff < 365.25*24*3600: return "yearly";
-                default: return "daily";
+                default:                     return "daily";
             }
         }
     }
 
-    static public function formatResult($result ) {
-        global $wgAutoSitemap, $wgLang, $wgContLang, $wgServer;
+    static function formatResult($server, $result, $pos, $count) {
+        global $wgContLang;
 
-        $title = Title::makeTitle( $result->namespace, $result->title );
-        $link = Linker::linkKnown( $title, htmlspecialchars( $wgContLang->convert( $title->getPrefixedText() ) ) );
+        $title = Title::makeTitle($result->namespace, $result->title);
+        $link  = Linker::linkKnown($title, htmlspecialchars($wgContLang->convert($title->getPrefixedText())));
+        $url   = $title->getLocalURL();
 
-        $url = $title->getLocalURL();
+        $priority = self::getPriority($pos, $count);
+        $last_modification = gmdate("Y-m-d\TH:i:s\Z", wfTimestamp(TS_UNIX, $result->last_modification));
+        $freq = self::getChangeFreq($result->id);
 
-        $last_modification = gmdate( "Y-m-d\TH:i:s\Z", wfTimestamp( TS_UNIX, $result->last_modification ) );
-
-        self::addURL( $wgAutoSitemap["server"], $url, $last_modification, $result->id );
-
-        ++$wgAutoSitemap["cursor_pos"];
-
-        return;
+        return self::prepareLine($server.$url, $priority, $last_modification, $freq);
     }
 
-    static public function addURL( $base, $url, $last_modification, $page_id ) {
-        global $wgAutoSitemap;
-
-        $result="  <url>\n    <loc>".str_replace(array('(',')'),array('%28','%29'),$base.$url)."</loc>\n    <priority>".round(self::getPriority(),1)."</priority>\n    <lastmod>$last_modification</lastmod>\n    <changefreq>".(self::getChangeFreq($page_id))."</changefreq>\n  </url>\n";
-        self::utf8_write( $wgAutoSitemap["file_handle"], $result );
+    static function prepareLine($url, $priority, $last_modification, $freq) {
+        return '
+  <url>
+    <loc>'.self::encodeUrl($url).'</loc>
+    <priority>'.round($priority, 1).'</priority>
+    <lastmod>'.$last_modification.'</lastmod>
+    <changefreq>'.$freq.'</changefreq>
+  </url>';
     }
 
-    static public function utf8_write( $handle, $data ) {
-        fwrite( $handle, utf8_encode( $data ) ) ;
+    static function encodeUrl($url) {
+        return str_replace(array('(',')'),array('%28','%29'), $url);
     }
 
     static public function notifySitemap() {
@@ -230,8 +228,9 @@ class AutoSitemap {
         if(is_array($notify)) {
             foreach ($notify as $item) {
                 $handle = fopen($item, 'r');
-                if ( $handle)
+                if ($handle) {
                     fclose($handle);
+                }
             }
         }
     }
