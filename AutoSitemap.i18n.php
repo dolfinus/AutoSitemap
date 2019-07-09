@@ -1,6 +1,6 @@
 <?php
 /**
-* Internationalization file for the GoogleSiteVerification extension.
+* Internationalization file for the AutoSitemap extension.
 *
 * @licence GPL v2 or later
 * @author Karsten Hoffmeyer (Kghbln)

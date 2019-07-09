@@ -42,6 +42,7 @@
 #1.1: Upgrade to MediaWiki 1.25, code review
 #1.2: Search engines notifications improvements & fixes
 #1.2.1: Write sitemap to tempfile and then rename it
+#1.2.2: Randomize temp file name
 
 if (!defined('MEDIAWIKI')) {
     die('This file is a MediaWiki extension, it is not a valid entry point');
@@ -88,7 +89,7 @@ class AutoSitemap {
 
         $server       = $wgAutoSitemap["server"];
         $filename     = $wgAutoSitemap["filename"];
-        $tmp_filename = $filename.'.tmp';
+        $tmp_filename = $filename.'.tmp'.bin2hex(random_bytes(16)).'.tmp';
 
         $file_handle = fopen($tmp_filename, 'w') or die('Cannot write to '.$tmp_filename.'.');
 
