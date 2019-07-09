@@ -43,6 +43,7 @@
 #1.2: Search engines notifications improvements & fixes
 #1.2.1: Write sitemap to tempfile and then rename it
 #1.2.2: Randomize temp file name
+#1.3: Set priority for pages or namespaces
 
 if (!defined('MEDIAWIKI')) {
     die('This file is a MediaWiki extension, it is not a valid entry point');
@@ -72,6 +73,7 @@ if (!isset($wgAutoSitemap["exclude_namespaces"])) $wgAutoSitemap["exclude_namesp
                                                                                          ];
 
 if (!isset($wgAutoSitemap["exclude_pages"]    )) $wgAutoSitemap["exclude_pages"]       = [];
+if (!isset($wgAutoSitemap["priority"]         )) $wgAutoSitemap["priority"]            = [];
 if (!isset($wgAutoSitemap["freq"]             )) $wgAutoSitemap["freq"]                = "daily";
 
 if (!isset($wgAutoSitemap["header"]           )) $wgAutoSitemap["header"]              =
@@ -152,7 +154,20 @@ class AutoSitemap {
     }
 
 
-    static function getPriority($pos, $count) {
+    static function getPriority($title, $pos, $count) {
+        global $wgAutoSitemap;
+        $priority = $wgAutoSitemap["priority"];
+        if (!is_array($priority)) {
+            return $priority;
+        }
+        $namespace = $title->getNamespace();
+        if (array_key_exists($namespace, $priority)) {
+            return $priority[$namespace];
+        }
+        $pageName = $title->getPrefixedText();
+        if (array_key_exists($pageName, $priority)) {
+            return $priority[$pageName];
+        }
         return $pos/$count;
     }
 
@@ -198,10 +213,9 @@ class AutoSitemap {
         global $wgContLang;
 
         $title = Title::makeTitle($result->namespace, $result->title);
-        $link  = Linker::linkKnown($title, htmlspecialchars($wgContLang->convert($title->getPrefixedText())));
         $url   = $title->getLocalURL();
 
-        $priority = self::getPriority($pos, $count);
+        $priority = self::getPriority($title, $pos, $count);
         $last_modification = gmdate("Y-m-d\TH:i:s\Z", wfTimestamp(TS_UNIX, $result->last_modification));
         $freq = self::getChangeFreq($result->id);
 
