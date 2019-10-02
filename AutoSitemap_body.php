@@ -226,7 +226,7 @@ class AutoSitemap {
         return '
   <url>
     <loc>'.self::encodeUrl($url).'</loc>
-    <priority>'.round($priority, 1).'</priority>
+    <priority>'.str_replace(",", ".", round(self::getPriority(),1)).'</priority>
     <lastmod>'.$last_modification.'</lastmod>
     <changefreq>'.$freq.'</changefreq>
   </url>';
