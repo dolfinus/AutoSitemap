@@ -95,7 +95,7 @@ class AutoSitemap {
 
         $file_handle = fopen($tmp_filename, 'w') or die('Cannot write to '.$tmp_filename.'.');
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = wfGetDB(DB_REPLICA);
         $res = $dbr->query(self::getSQL());
 
         $count = $dbr->numRows($res);
@@ -118,7 +118,7 @@ class AutoSitemap {
     static function getSQL() {
         global $wgAutoSitemap;
 
-        $dbr =& wfGetDB(DB_SLAVE);
+        $dbr =& wfGetDB(DB_REPLICA);
         $page = $dbr->tableName('page');
         $revision = $dbr->tableName('revision');
 
