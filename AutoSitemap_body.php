@@ -1,7 +1,7 @@
 <?php
 
 # Special:AutoSitemap MediaWiki extension
-# Version 1.1
+# Version 1.4
 #
 # Copyright  2006 Fran&ccedil;ois Boutines-Vignard, 2008-2012 Jehy, 2016-2017 Dolfinus.
 #
@@ -38,12 +38,13 @@
 # 1.2: Fixed compatibility issues for MW 1.19.2
 
 #AutoSitemap
-#1.0: Rewrited extension for automatic sitemap generation
+#1.0: Rewrote extension for automatic sitemap generation
 #1.1: Upgrade to MediaWiki 1.25, code review
 #1.2: Search engines notifications improvements & fixes
 #1.2.1: Write sitemap to tempfile and then rename it
 #1.2.2: Randomize temp file name
 #1.3: Set priority for pages or namespaces
+#1.4: MW 1.34 support
 
 if (!defined('MEDIAWIKI')) {
     die('This file is a MediaWiki extension, it is not a valid entry point');
@@ -95,7 +96,7 @@ class AutoSitemap {
 
         $file_handle = fopen($tmp_filename, 'w') or die('Cannot write to '.$tmp_filename.'.');
 
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = wfGetDB(DB_REPLICA);
         $res = $dbr->query(self::getSQL());
 
         $count = $dbr->numRows($res);
@@ -118,7 +119,7 @@ class AutoSitemap {
     static function getSQL() {
         global $wgAutoSitemap;
 
-        $dbr =& wfGetDB(DB_SLAVE);
+        $dbr =& wfGetDB(DB_REPLICA);
         $page = $dbr->tableName('page');
         $revision = $dbr->tableName('revision');
 
