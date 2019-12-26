@@ -1,7 +1,7 @@
 <?php
 
 # Special:AutoSitemap MediaWiki extension
-# Version 1.1
+# Version 1.4
 #
 # Copyright  2006 Fran&ccedil;ois Boutines-Vignard, 2008-2012 Jehy, 2016-2017 Dolfinus.
 #
