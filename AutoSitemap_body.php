@@ -38,7 +38,7 @@
 # 1.2: Fixed compatibility issues for MW 1.19.2
 
 #AutoSitemap
-#1.0: Rewrited extension for automatic sitemap generation
+#1.0: Rewrote extension for automatic sitemap generation
 #1.1: Upgrade to MediaWiki 1.25, code review
 #1.2: Search engines notifications improvements & fixes
 #1.2.1: Write sitemap to tempfile and then rename it
