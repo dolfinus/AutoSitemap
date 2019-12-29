@@ -63,7 +63,6 @@ if (!isset($wgAutoSitemap["exclude_namespaces"])) $wgAutoSitemap["exclude_namesp
                                                                                             NS_USER,
                                                                                             NS_USER_TALK,
                                                                                             NS_PROJECT_TALK,
-                                                                                            NS_IMAGE_TALK,
                                                                                             NS_MEDIAWIKI,
                                                                                             NS_MEDIAWIKI_TALK,
                                                                                             NS_TEMPLATE,
