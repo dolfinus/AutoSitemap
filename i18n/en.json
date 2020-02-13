@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Adam Shorland",
+			"Dolfinus"
+		]
+	},
+    "ausmp-desc": "Creates and updates a Sitemap file automatically while any site`s page is changing."
+}

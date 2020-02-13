@@ -2,13 +2,15 @@
   "name": "AutoSitemap",
   "author": "Dolfinus",
   "url": "https://www.mediawiki.org/wiki/Extension:AutoSitemap",
-  "description": "Creates a XML Sitemap file automatically.",
-  "version": "1.4",
+  "descriptionmsg": "ausmp-desc",
+  "version": "1.5",
   "license-name": "GPL-3.0+",
   "type": "other",
-  "ExtensionMessagesFiles": {
-    "AutoSitemap": "AutoSitemap.i18n.php"
-  },
+	"MessagesDirs": {
+		"AutoSitemap": [
+			"i18n"
+		]
+	},
   "AutoloadClasses": {
     "AutoSitemap": "AutoSitemap_body.php"
   },
