@@ -180,7 +180,7 @@ class AutoSitemap {
         }
 
 
-        $dbr =& wfGetDB(DB_SLAVE);
+        $dbr =& wfGetDB(DB_REPLICA);
         $revision = $dbr->tableName('revision');
 
         $sql = "SELECT
