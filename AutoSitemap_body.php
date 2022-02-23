@@ -120,7 +120,7 @@ class AutoSitemap {
     static function getSQL() {
         global $wgAutoSitemap;
 
-        $dbr =& wfGetDB(DB_REPLICA);
+        $dbr = wfGetDB(DB_REPLICA);
         $page = $dbr->tableName('page');
         $revision = $dbr->tableName('revision');
 
@@ -181,7 +181,7 @@ class AutoSitemap {
         }
 
 
-        $dbr =& wfGetDB(DB_REPLICA);
+        $dbr = wfGetDB(DB_REPLICA);
         $revision = $dbr->tableName('revision');
 
         $sql = "SELECT
