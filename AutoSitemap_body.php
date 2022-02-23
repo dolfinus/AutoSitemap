@@ -46,6 +46,7 @@
 #1.3: Set priority for pages or namespaces
 #1.4: MW 1.34 support
 #1.4.1: Fix MW 1.34 support
+#1.5: Fix PHP warning
 
 if (!defined('MEDIAWIKI')) {
     die('This file is a MediaWiki extension, it is not a valid entry point');
