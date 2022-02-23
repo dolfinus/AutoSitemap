@@ -141,13 +141,13 @@ class AutoSitemap {
 
         if(is_array($wgAutoSitemap["exclude_namespaces"])) {
             if (count($wgAutoSitemap["exclude_namespaces"]) > 0) {
-                $sql. = "AND page_namespace NOT IN (" . implode(",", $wgAutoSitemap["exclude_namespaces"]) . ")\n";
+                $sql .= "AND page_namespace NOT IN (" . implode(",", $wgAutoSitemap["exclude_namespaces"]) . ")\n";
             }
         }
 
         if (is_array($wgAutoSitemap["exclude_pages"])) {
             if (count($wgAutoSitemap["exclude_pages"]) > 0) {
-                $sql. = "AND page_title NOT IN ('" . implode("','", $wgAutoSitemap["exclude_pages"]) . "')\n";
+                $sql .= "AND page_title NOT IN ('" . implode("','", $wgAutoSitemap["exclude_pages"]) . "')\n";
             }
         }
 
