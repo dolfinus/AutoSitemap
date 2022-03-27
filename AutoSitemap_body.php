@@ -88,7 +88,6 @@ if (!isset($wgAutoSitemap["header"]           )) $wgAutoSitemap["header"]       
 if (!isset($wgAutoSitemap["footer"]           )) $wgAutoSitemap["footer"]              = "\n</urlset>";
 
 class AutoSitemap {
-
     static public function writeSitemap() {
         global $wgAutoSitemap;
 

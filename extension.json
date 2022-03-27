@@ -3,7 +3,7 @@
   "author": "Dolfinus",
   "url": "https://www.mediawiki.org/wiki/Extension:AutoSitemap",
   "description": "Creates a XML Sitemap file automatically.",
-  "version": "1.5",
+  "version": "1.6",
   "license-name": "GPL-3.0+",
   "type": "other",
   "ExtensionMessagesFiles": {
@@ -14,37 +14,37 @@
   },
   "Hooks": {
     "PageContentInsertComplete" : [
-	    "AutoSitemap::writeSitemap"
+      "AutoSitemap::writeSitemap"
     ],
     "AfterImportPage" : [
-	    "AutoSitemap::writeSitemap"
+      "AutoSitemap::writeSitemap"
     ],
     "ArticleDeleteComplete" : [
-	    "AutoSitemap::writeSitemap"
+      "AutoSitemap::writeSitemap"
     ],
     "ArticleUndelete" : [
-	    "AutoSitemap::writeSitemap"
+      "AutoSitemap::writeSitemap"
     ],
     "TitleMoveComplete" : [
-	    "AutoSitemap::writeSitemap"
+      "AutoSitemap::writeSitemap"
     ],
     "ArticleMergeComplete" : [
-	    "AutoSitemap::writeSitemap"
+      "AutoSitemap::writeSitemap"
     ],
     "ArticleRollbackComplete" : [
-	    "AutoSitemap::writeSitemap"
+      "AutoSitemap::writeSitemap"
     ],
     "UploadComplete" : [
-	    "AutoSitemap::writeSitemap"
+      "AutoSitemap::writeSitemap"
     ],
     "ArticleRevisionUndeleted" : [
-	    "AutoSitemap::writeSitemap"
+      "AutoSitemap::writeSitemap"
     ],
-    "RevisionInsertComplete" : [
-	    "AutoSitemap::writeSitemap"
+    "RevisionRecordInserted" : [
+      "AutoSitemap::writeSitemap"
     ],
-    "PageContentSaveComplete" : [
-	    "AutoSitemap::writeSitemap"
+    "PageSaveComplete" : [
+      "AutoSitemap::writeSitemap"
     ]
   },
   "manifest_version": 1
