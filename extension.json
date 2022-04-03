@@ -13,37 +13,31 @@
     "AutoSitemap": "AutoSitemap_body.php"
   },
   "Hooks": {
-    "PageContentInsertComplete" : [
+    "AfterImportPage": [
       "AutoSitemap::writeSitemap"
     ],
-    "AfterImportPage" : [
+    "PageDeleteComplete": [
       "AutoSitemap::writeSitemap"
     ],
-    "ArticleDeleteComplete" : [
+    "ArticleUndelete": [
       "AutoSitemap::writeSitemap"
     ],
-    "ArticleUndelete" : [
+    "PageMoveComplete": [
       "AutoSitemap::writeSitemap"
     ],
-    "TitleMoveComplete" : [
+    "ArticleMergeComplete": [
       "AutoSitemap::writeSitemap"
     ],
-    "ArticleMergeComplete" : [
+    "UploadComplete": [
       "AutoSitemap::writeSitemap"
     ],
-    "ArticleRollbackComplete" : [
+    "RevisionUndeleted": [
       "AutoSitemap::writeSitemap"
     ],
-    "UploadComplete" : [
+    "RevisionRecordInserted": [
       "AutoSitemap::writeSitemap"
     ],
-    "ArticleRevisionUndeleted" : [
-      "AutoSitemap::writeSitemap"
-    ],
-    "RevisionRecordInserted" : [
-      "AutoSitemap::writeSitemap"
-    ],
-    "PageSaveComplete" : [
+    "PageSaveComplete": [
       "AutoSitemap::writeSitemap"
     ]
   },
