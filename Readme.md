@@ -27,7 +27,6 @@ You can notify web sites you want about the update of sitemap. Just write all no
 ```php
 $wgAutoSitemap["notify"] = [
     'https://www.google.com/webmasters/sitemaps/ping?sitemap=https://your-site.com/sitemap.xml',
-    'https://www.bing.com/webmaster/ping.aspx?sitemap=https://your-site.com/sitemap.xml'
 ];
 ```
 Sometimes web hoster does not allow the fopen command to call urls (allow_url_fopen=false). If you can't or doesn't want to use notification, set this to empty array by deleting all lines between brackets (`= [];`).
