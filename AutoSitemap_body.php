@@ -99,11 +99,11 @@ class AutoSitemap {
         $dbr = wfGetDB(DB_REPLICA);
         $res = $dbr->query(self::getSQL());
 
-        $count = $dbr->numRows($res);
+        $count = $res->numRows();
         $pos   = 0;
 
         $data = $wgAutoSitemap["header"];
-        while($row = $dbr->fetchObject($res)) {
+        while($row = $res->fetchObject()) {
             $data .= self::formatResult($server, $row, $pos, $count);
             ++$pos;
         }
@@ -189,12 +189,12 @@ class AutoSitemap {
         FROM $revision WHERE rev_page = $page_id";
 
         $res   = $dbr->query($sql);
-        $count = $dbr->numRows($res);
+        $count = $res->numRows();
 
         if($count < 1) {
             return "daily";
         } else {
-            $item1 = $dbr->fetchObject($res);
+            $item1 = $res->fetchObject();
             $cur = time() ;
             $first = wfTimestamp(TS_UNIX, $item1->creation_timestamp);
 
