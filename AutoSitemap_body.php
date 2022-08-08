@@ -47,6 +47,9 @@
 #1.4: MW 1.34 support
 #1.4.1: Fix MW 1.34 support
 #1.5: Fix PHP warning
+#1.6: Fix MW 1.37 compatibility issue
+#1.7: Remove Bing search notifications from default config
+#1.7.1: Fix MW 1.37 compatibility warning
 
 if (!defined('MEDIAWIKI')) {
     die('This file is a MediaWiki extension, it is not a valid entry point');
