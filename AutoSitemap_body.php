@@ -172,7 +172,7 @@ class AutoSitemap {
         if (array_key_exists($pageName, $priority)) {
             return $priority[$pageName];
         }
-        return $pos/$count;
+        return 1.0;
     }
 
     static function getChangeFreq($page_id) {
