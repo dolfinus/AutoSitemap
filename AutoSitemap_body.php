@@ -225,7 +225,7 @@ class AutoSitemap {
         $title = Title::makeTitle($result->namespace, $result->title);
         $url   = $title->getLocalURL();
 
-        $priority = self::getPriority($title, $pos, $count);
+        $priority = sprintf("%01.1f", self::getPriority($title, $pos, $count));
         $last_modification = gmdate("Y-m-d\TH:i:s\Z", wfTimestamp(TS_UNIX, $result->last_modification));
         $freq = self::getChangeFreq($result->id);
 
@@ -236,7 +236,7 @@ class AutoSitemap {
         return '
   <url>
     <loc>'.self::encodeUrl($url).'</loc>
-    <priority>'.str_replace(",", ".", round($priority,1)).'</priority>
+    <priority>'.$priority.'</priority>
     <lastmod>'.$last_modification.'</lastmod>
     <changefreq>'.$freq.'</changefreq>
   </url>';
