@@ -119,7 +119,7 @@ class AutoSitemap {
     }
 
     static function write($handle, $data) {
-        $retval = fwrite($handle, utf8_encode($data));
+        $retval = fwrite($handle, $data);
         if ($retval === FALSE || $retval === 0) {
             die('Error while writing data.');
         }
