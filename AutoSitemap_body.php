@@ -105,18 +105,24 @@ class AutoSitemap {
         $count = $res->numRows();
         $pos   = 0;
 
-        $data = $wgAutoSitemap["header"];
+        self::write($file_handle, $wgAutoSitemap["header"]);
         while($row = $res->fetchObject()) {
-            $data .= self::formatResult($server, $row, $pos, $count);
+            self::write($file_handle, self::formatResult($server, $row, $pos, $count));
             ++$pos;
         }
-        $data .= $wgAutoSitemap["footer"];
+        self::write($file_handle, $wgAutoSitemap["footer"]);
 
-        fwrite($file_handle, utf8_encode($data));
         fclose($file_handle);
         rename($tmp_filename, $filename);
 
         self::notifySitemap();
+    }
+
+    static function write($handle, $data) {
+        $retval = fwrite($handle, utf8_encode($data));
+        if ($retval === FALSE || $retval === 0) {
+            die('Error while writing data.');
+        }
     }
 
     static function getSQL() {
