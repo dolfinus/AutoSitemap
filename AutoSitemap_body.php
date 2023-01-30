@@ -89,12 +89,22 @@ if (!isset($wgAutoSitemap["header"]           )) $wgAutoSitemap["header"]       
 
 if (!isset($wgAutoSitemap["footer"]           )) $wgAutoSitemap["footer"]              = "\n</urlset>";
 
+if (!isset($wgAutoSitemap["min_age"]          )) $wgAutoSitemap["min_age"]             = 3600; // One hour in seconds
+
 class AutoSitemap {
     static public function writeSitemap() {
         global $wgAutoSitemap;
 
+        $filename = $wgAutoSitemap["filename"];
+        $min_age = $wgAutoSitemap["min_age"];
+
+        $mtime = filemtime($filename);
+        if ($mtime !== FALSE && time() - $mtime < $min_age) {
+           // Sitemap is young, no need to update.
+           return;
+        }
+
         $server       = $wgAutoSitemap["server"];
-        $filename     = $wgAutoSitemap["filename"];
         $tmp_filename = $filename.'.tmp'.bin2hex(random_bytes(16)).'.tmp';
 
         $file_handle = fopen($tmp_filename, 'w');

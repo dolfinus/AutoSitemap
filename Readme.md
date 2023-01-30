@@ -78,6 +78,11 @@ $wgAutoSitemap["priority"]['Main page'] = 1;
 $wgAutoSitemap["priority"]['Other page'] = 0.8;
 ...
 ```
+### Rate-limit recreation of the sitemap
+For wikis with many pages, generating the sitemap may consume significant resources, so you may not want it to happen too frequently.  With this option, you can specify that the sitemap should only be recreated if it's at least a certain number of seconds old.
+```php
+$wgAutoSitemap["min_age"] = 3600; // 1 hour
+```
 
 ## Use
 ### Permissions
