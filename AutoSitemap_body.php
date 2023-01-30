@@ -97,7 +97,11 @@ class AutoSitemap {
         $filename     = $wgAutoSitemap["filename"];
         $tmp_filename = $filename.'.tmp'.bin2hex(random_bytes(16)).'.tmp';
 
-        $file_handle = fopen($tmp_filename, 'w') or die('Cannot write to '.$tmp_filename.'.');
+        $file_handle = fopen($tmp_filename, 'w');
+        if ($file_handle === FALSE) {
+           error_log("Couldn't fopen file: $tmp_filename");
+           return;
+        }
 
         $dbr = wfGetDB(DB_REPLICA);
         $res = $dbr->query(self::getSQL());
@@ -105,14 +109,20 @@ class AutoSitemap {
         $count = $res->numRows();
         $pos   = 0;
 
-        self::write($file_handle, $wgAutoSitemap["header"]);
-        while($row = $res->fetchObject()) {
-            self::write($file_handle, self::formatResult($server, $row, $pos, $count));
-            ++$pos;
+        try {
+            self::write($file_handle, $wgAutoSitemap["header"]);
+            while($row = $res->fetchObject()) {
+                self::write($file_handle, self::formatResult($server, $row, $pos, $count));
+                ++$pos;
+            }
+            self::write($file_handle, $wgAutoSitemap["footer"]);
+        } catch (Exception $e) {
+            error_log("Exception while writing to $tmp_filename: $e");
+            return;
+        } finally {
+            fclose($file_handle);
         }
-        self::write($file_handle, $wgAutoSitemap["footer"]);
 
-        fclose($file_handle);
         rename($tmp_filename, $filename);
 
         self::notifySitemap();
@@ -121,7 +131,7 @@ class AutoSitemap {
     static function write($handle, $data) {
         $retval = fwrite($handle, $data);
         if ($retval === FALSE || $retval === 0) {
-            die('Error while writing data.');
+            throw new Exception("fwrite returned $retval");
         }
     }
 
