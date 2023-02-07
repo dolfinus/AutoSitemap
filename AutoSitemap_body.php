@@ -116,26 +116,29 @@ class AutoSitemap {
         $dbr = wfGetDB(DB_REPLICA);
         $res = $dbr->query(self::getSQL());
 
-        $count = $res->numRows();
-        $pos   = 0;
+        $error = FALSE;
 
         try {
             self::write($file_handle, $wgAutoSitemap["header"]);
             while($row = $res->fetchObject()) {
-                self::write($file_handle, self::formatResult($server, $row, $pos, $count));
-                ++$pos;
+                self::write($file_handle, self::formatResult($server, $row));
             }
             self::write($file_handle, $wgAutoSitemap["footer"]);
         } catch (Exception $e) {
             error_log("Exception while writing to $tmp_filename: $e");
-            return;
+            $error = TRUE;
         } finally {
             fclose($file_handle);
         }
 
-        rename($tmp_filename, $filename);
-
-        self::notifySitemap();
+        if ($error) {
+            if (!unlink($tmp_filename)) {
+                error_log("Warning: Couldn't delete $tmp_filename.");
+            }
+        } else {
+            rename($tmp_filename, $filename);
+            self::notifySitemap();
+        }
     }
 
     static function write($handle, $data) {
@@ -184,7 +187,7 @@ class AutoSitemap {
     }
 
 
-    static function getPriority($title, $pos, $count) {
+    static function getPriority($title) {
         global $wgAutoSitemap;
         $priority = $wgAutoSitemap["priority"];
         if (!is_array($priority)) {
@@ -239,13 +242,13 @@ class AutoSitemap {
         }
     }
 
-    static function formatResult($server, $result, $pos, $count) {
+    static function formatResult($server, $result) {
         global $wgContLang;
 
         $title = Title::makeTitle($result->namespace, $result->title);
         $url   = $title->getLocalURL();
 
-        $priority = sprintf("%01.1f", self::getPriority($title, $pos, $count));
+        $priority = sprintf("%01.1f", self::getPriority($title));
         $last_modification = gmdate("Y-m-d\TH:i:s\Z", wfTimestamp(TS_UNIX, $result->last_modification));
         $freq = self::getChangeFreq($result->id);
 
