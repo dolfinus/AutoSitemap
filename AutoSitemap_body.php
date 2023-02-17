@@ -150,7 +150,8 @@ class AutoSitemap {
             fclose($file_handle);
         }
 
-        // Show warning message if sitemap is large than 80% of the limit;
+        // Show warning message if sitemap is large than 80% of the limit.
+        // If limit was exceeded, show error message
         if ($entries >= $maxEntries) {
             error_log("ERROR: Sitemap is exceeded size limit of $maxEntries items! Please use https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php for generating sitemap file instead of Extensions:AutoSitemap.");
         } else if ($entries >= $maxEntries * 0.8) {
