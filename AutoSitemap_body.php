@@ -50,6 +50,7 @@
 #1.6: Fix MW 1.37 compatibility issue
 #1.7: Remove Bing search notifications from default config
 #1.7.1: Fix MW 1.37 compatibility warning
+#1.8: Add rate-limit feature and warning messages for too large sitemap
 
 if (!defined('MEDIAWIKI')) {
     die('This file is a MediaWiki extension, it is not a valid entry point');
@@ -89,7 +90,7 @@ if (!isset($wgAutoSitemap["header"]           )) $wgAutoSitemap["header"]       
 
 if (!isset($wgAutoSitemap["footer"]           )) $wgAutoSitemap["footer"]              = "\n</urlset>";
 
-if (!isset($wgAutoSitemap["min_age"]          )) $wgAutoSitemap["min_age"]             = 3600; // One hour in seconds
+if (!isset($wgAutoSitemap["min_age"]          )) $wgAutoSitemap["min_age"]             = 0; // No rate limit
 
 class AutoSitemap {
     static public function writeSitemap() {
