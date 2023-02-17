@@ -116,19 +116,50 @@ class AutoSitemap {
         $dbr = wfGetDB(DB_REPLICA);
         $res = $dbr->query(self::getSQL());
 
+        // Sitemaps are limited to 50,000 URLs and 50 MB.
+        $entries    = 0;
+        $bytes      = 0;
+        $maxEntries = 50000;
+        $maxBytes   = 50000000;
+
+        /* Note:
+         *
+         * Actually, https://www.sitemaps.org/protocol.html says the limit is 52,428,800 bytes,
+         * which is 50 MiB (MiB = 1024 * 1024), but it uses the old notation of "MB" which has
+         * since been standardized in ISO to mean 1000 * 1000.  We use the lower limit just in
+         * case, because some systems may interpret the "50MB" to mean 50 * 1000 * 1000.
+         *
+         * It's very unlikely to reach the size limit before reaching the 50k URL limit anyway,
+         * unless there are tons of *extremely* long URLs in a sitemap.
+         */
+
         $error = FALSE;
 
         try {
-            self::write($file_handle, $wgAutoSitemap["header"]);
+            $bytes += self::write($file_handle, $wgAutoSitemap["header"]);
             while($row = $res->fetchObject()) {
-                self::write($file_handle, self::formatResult($server, $row));
+                $entries += 1;
+                $bytes += self::write($file_handle, self::formatResult($server, $row));
             }
-            self::write($file_handle, $wgAutoSitemap["footer"]);
+            $bytes += self::write($file_handle, $wgAutoSitemap["footer"]);
         } catch (Exception $e) {
-            error_log("Exception while writing to $tmp_filename: $e");
+            error_log("Writing sitemap failed: $e");
             $error = TRUE;
         } finally {
             fclose($file_handle);
+        }
+
+        // Show warning message if sitemap is large than 80% of the limit;
+        if ($entries >= $maxEntries) {
+            error_log("ERROR: Sitemap is exceeded size limit of $maxEntries items! Please use https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php for generating sitemap file instead of Extensions:AutoSitemap.");
+        } else if ($entries >= $maxEntries * 0.8) {
+            error_log("WARNING: Sitemap is exceeded 80% of size limit of $maxEntries items. Please use https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php for generating sitemap file instead of Extensions:AutoSitemap.");
+        }
+
+        if ($bytes >= $maxBytes) {
+            error_log("ERROR: Sitemap is exceeded size limit of $maxBytes bytes!. Please use https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php for generating sitemap file instead of Extensions:AutoSitemap.");
+        } else if ($bytes >= $maxBytes * 0.8) {
+            error_log("WARNING: Sitemap is exceeded 80% of size limit of $maxBytes bytes.. Please use https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php for generating sitemap file instead of Extensions:AutoSitemap.");
         }
 
         if ($error) {
@@ -142,10 +173,11 @@ class AutoSitemap {
     }
 
     static function write($handle, $data) {
-        $retval = fwrite($handle, $data);
-        if ($retval === FALSE || $retval === 0) {
-            throw new Exception("fwrite returned $retval");
+        $bytes = fwrite($handle, $data);
+        if ($bytes === FALSE || $bytes === 0) {
+            throw new Exception("Call to fwrite failed (returned $bytes).");
         }
+        return $bytes;
     }
 
     static function getSQL() {
