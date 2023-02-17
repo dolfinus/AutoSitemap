@@ -149,8 +149,17 @@ class AutoSitemap {
             fclose($file_handle);
         }
 
-        if ($entries > $maxEntries || $bytes > $maxBytes) {
-            error_log("WARNING: Sitemap exceeds allowed size limit!");
+        // Show warning message if sitemap is large than 80% of the limit;
+        if ($entries >= $maxEntries) {
+            error_log("ERROR: Sitemap is exceeded size limit of $maxEntries items! Please use https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php for generating sitemap file instead of Extensions:AutoSitemap.");
+        } else if ($entries >= $maxEntries * 0.8) {
+            error_log("WARNING: Sitemap is exceeded 80% of size limit of $maxEntries items. Please use https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php for generating sitemap file instead of Extensions:AutoSitemap.");
+        }
+
+        if ($bytes >= $maxBytes) {
+            error_log("ERROR: Sitemap is exceeded size limit of $maxBytes bytes!. Please use https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php for generating sitemap file instead of Extensions:AutoSitemap.");
+        } else if ($bytes >= $maxBytes * 0.8) {
+            error_log("WARNING: Sitemap is exceeded 80% of size limit of $maxBytes bytes.. Please use https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php for generating sitemap file instead of Extensions:AutoSitemap.");
         }
 
         if ($error) {
