@@ -2,6 +2,10 @@
 ## Description
 MediaWiki extension that automatically build sitemap.xml file every time a page is created, edited or deleted. A sitemap file helps search engines to observe and focus on a web sites page content.
 
+### Note
+
+This extension can be used on small MediaWiki instances (up to 10k pages). If your instance is larger than 50k pages, you should use [GenerateSitemap.php](https://www.mediawiki.org/wiki/Manual:GenerateSitemap.php) instead because it does support sitemap index file, can create separated files for each namespace, compress sitemap files and also designed to be run on schedule instead of triggering after each page modification.
+
 ## Intall
 Download the latest snapshot and extract it to your extensions directory. Then include it in your [LocalSettings.php](https://www.mediawiki.org/wiki/Manual:LocalSettings.php) file as in the following example:
 ```php
@@ -81,7 +85,7 @@ $wgAutoSitemap["priority"]['Other page'] = 0.8;
 ### Rate-limit recreation of the sitemap
 For wikis with many pages, generating the sitemap may consume significant resources, so you may not want it to happen too frequently.  With this option, you can specify that the sitemap should only be recreated if it's at least a certain number of seconds old.
 ```php
-$wgAutoSitemap["min_age"] = 3600; // 1 hour
+$wgAutoSitemap["min_age"] = 3600; // 1 hour, default 0 (no rate-limit)
 ```
 
 ## Use
