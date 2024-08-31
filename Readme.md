@@ -26,15 +26,6 @@ By default all urls in sitemap use $wgCanonicalServer (or $wgServer, if it doesn
 $wgAutoSitemap["server"] = "https://your-site.com";
 ```
 
-### Search engines notification
-You can notify web sites you want about the update of sitemap. Just write all notify urls as array:
-```php
-$wgAutoSitemap["notify"] = [
-    'https://www.google.com/webmasters/sitemaps/ping?sitemap=https://your-site.com/sitemap.xml',
-];
-```
-Sometimes web hoster does not allow the fopen command to call urls (allow_url_fopen=false). If you can't or doesn't want to use notification, set this to empty array by deleting all lines between brackets (`= [];`).
-
 ### Exclude types of pages from sitemap
 You can exclude namespaces or exact pages from including them to sitemap:
 ```php
