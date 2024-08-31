@@ -167,7 +167,6 @@ class AutoSitemap {
             }
         } else {
             rename($tmp_filename, $filename);
-            self::notifySitemap();
         }
     }
 
@@ -298,18 +297,5 @@ class AutoSitemap {
 
     static function encodeUrl($url) {
         return str_replace(array('(',')'),array('%28','%29'), $url);
-    }
-
-    static public function notifySitemap() {
-        global $wgAutoSitemap;
-        $notify = $wgAutoSitemap["notify"];
-        if(is_array($notify)) {
-            foreach ($notify as $item) {
-                $handle = fopen($item, 'r');
-                if ($handle) {
-                    fclose($handle);
-                }
-            }
-        }
     }
 }
