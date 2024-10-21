@@ -56,6 +56,8 @@ if (!defined('MEDIAWIKI')) {
     die('This file is a MediaWiki extension, it is not a valid entry point');
 }
 
+use MediaWiki\MediaWikiServices;
+
 global $wgAutoSitemap, $wgServer, $wgCanonicalServer, $wgScriptPath;
 if (!isset($wgAutoSitemap["filename"]          )) $wgAutoSitemap["filename"]           = "sitemap.xml";
 if (!isset($wgAutoSitemap["server"]            )) $wgAutoSitemap["server"]             = isset($wgCanonicalServer) ? $wgCanonicalServer : $wgServer;
@@ -111,7 +113,7 @@ class AutoSitemap {
            return;
         }
 
-        $dbr = wfGetDB(DB_REPLICA);
+        $dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
         $res = $dbr->query(self::getSQL());
 
         // Sitemaps are limited to 50,000 URLs and 50 MB.
@@ -181,7 +183,7 @@ class AutoSitemap {
     static function getSQL() {
         global $wgAutoSitemap;
 
-        $dbr = wfGetDB(DB_REPLICA);
+        $dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
         $page = $dbr->tableName('page');
         $revision = $dbr->tableName('revision');
 
@@ -242,7 +244,7 @@ class AutoSitemap {
         }
 
 
-        $dbr = wfGetDB(DB_REPLICA);
+        $dbr = MediaWikiServices::getInstance()->getDBLoadBalancer()->getConnection(DB_REPLICA);
         $revision = $dbr->tableName('revision');
 
         $sql = "SELECT
