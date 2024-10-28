@@ -51,6 +51,8 @@
 #1.7: Remove Bing search notifications from default config
 #1.7.1: Fix MW 1.37 compatibility warning
 #1.8: Add rate-limit feature and warning messages for too large sitemap
+#1.8.1: Remove deprecated 'notify' option
+#1.8.2: Fix MW 1.39 deprecation warning
 
 if (!defined('MEDIAWIKI')) {
     die('This file is a MediaWiki extension, it is not a valid entry point');
