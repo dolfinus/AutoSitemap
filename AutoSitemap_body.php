@@ -59,6 +59,7 @@ if (!defined('MEDIAWIKI')) {
 }
 
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Title\Title;
 
 global $wgAutoSitemap, $wgServer, $wgCanonicalServer, $wgScriptPath;
 if (!isset($wgAutoSitemap["filename"]          )) $wgAutoSitemap["filename"]           = "sitemap.xml";
